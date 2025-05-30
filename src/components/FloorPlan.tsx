@@ -6,8 +6,7 @@ interface Zone {
   name: string;
   x: number;
   y: number;
-  width: number;
-  height: number;
+  radius: number;
   color: string;
   icon: string;
   dwellThreshold: number; // in milliseconds
@@ -31,7 +30,7 @@ const FloorPlan: React.FC = () => {
   const [isEventStreamCollapsed, setIsEventStreamCollapsed] = useState(false);
   const floorPlanRef = useRef<HTMLDivElement>(null);
 
-  // Define grocery store zones with responsive positioning
+  // Define grocery store zones with responsive positioning - circular zones centered on access points
   const getResponsiveZones = () => {
     // Get the current width of the floor plan for responsive calculations
     const floorPlanWidth = floorPlanRef.current?.clientWidth || 800;
@@ -41,72 +40,170 @@ const FloorPlan: React.FC = () => {
     const widthScale = floorPlanWidth / 800;
     const heightScale = floorPlanHeight / 600;
     
+    // Base radius for zones
+    const baseRadius = 80;
+    const radius = baseRadius * Math.min(widthScale, heightScale);
+    
     return [
-      { 
-        id: 'fresh-veggies', 
-        name: 'Fresh Veggies', 
-        x: 50 * widthScale, 
-        y: 100 * heightScale, 
-        width: 200 * widthScale, 
-        height: 150 * heightScale, 
-        color: 'linear-gradient(135deg, #a5d6a7 0%, #81c784 100%)', 
+      {
+        id: 'entrance',
+        name: 'Entrance',
+        x: 100 * widthScale,
+        y: 50 * heightScale,
+        radius: radius * 0.8,
+        color: 'radial-gradient(circle, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 70%, transparent 100%)',
+        icon: '🚪',
+        dwellThreshold: 3000
+      },
+      {
+        id: 'fresh-produce',
+        name: 'Fresh Produce',
+        x: 300 * widthScale,
+        y: 50 * heightScale,
+        radius: radius,
+        color: 'radial-gradient(circle, rgba(165, 214, 167, 0.4) 0%, rgba(129, 199, 132, 0.2) 70%, transparent 100%)',
         icon: '🥬',
-        dwellThreshold: 5000 
+        dwellThreshold: 5000
       },
-      { 
-        id: 'bakery', 
-        name: 'Bakery', 
-        x: 300 * widthScale, 
-        y: 100 * heightScale, 
-        width: 150 * widthScale, 
-        height: 150 * heightScale, 
-        color: 'linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%)', 
+      {
+        id: 'bakery',
+        name: 'Bakery',
+        x: 500 * widthScale,
+        y: 50 * heightScale,
+        radius: radius * 0.9,
+        color: 'radial-gradient(circle, rgba(255, 224, 178, 0.4) 0%, rgba(255, 204, 128, 0.2) 70%, transparent 100%)',
         icon: '🥐',
-        dwellThreshold: 4000 
+        dwellThreshold: 4000
       },
-      { 
-        id: 'meats', 
-        name: 'Meats', 
-        x: 500 * widthScale, 
-        y: 100 * heightScale, 
-        width: 200 * widthScale, 
-        height: 150 * heightScale, 
-        color: 'linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%)', 
+      {
+        id: 'deli-meats',
+        name: 'Deli & Meats',
+        x: 700 * widthScale,
+        y: 50 * heightScale,
+        radius: radius,
+        color: 'radial-gradient(circle, rgba(255, 205, 210, 0.4) 0%, rgba(239, 154, 154, 0.2) 70%, transparent 100%)',
         icon: '🥩',
-        dwellThreshold: 6000 
+        dwellThreshold: 6000
       },
-      { 
-        id: 'dairy', 
-        name: 'Dairy', 
-        x: 50 * widthScale, 
-        y: 300 * heightScale, 
-        width: 200 * widthScale, 
-        height: 150 * heightScale, 
-        color: 'linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%)', 
+      {
+        id: 'dairy-eggs',
+        name: 'Dairy & Eggs',
+        x: 100 * widthScale,
+        y: 250 * heightScale,
+        radius: radius,
+        color: 'radial-gradient(circle, rgba(179, 229, 252, 0.4) 0%, rgba(129, 212, 250, 0.2) 70%, transparent 100%)',
         icon: '🥛',
-        dwellThreshold: 3000 
+        dwellThreshold: 3000
       },
-      { 
-        id: 'frozen', 
-        name: 'Frozen', 
-        x: 300 * widthScale, 
-        y: 300 * heightScale, 
-        width: 150 * widthScale, 
-        height: 150 * heightScale, 
-        color: 'linear-gradient(135deg, #b2ebf2 0%, #80deea 100%)', 
+      {
+        id: 'pantry-aisles',
+        name: 'Pantry Aisles',
+        x: 300 * widthScale,
+        y: 250 * heightScale,
+        radius: radius * 1.1,
+        color: 'radial-gradient(circle, rgba(255, 241, 118, 0.3) 0%, rgba(255, 235, 59, 0.15) 70%, transparent 100%)',
+        icon: '🥫',
+        dwellThreshold: 8000
+      },
+      {
+        id: 'frozen-foods',
+        name: 'Frozen Foods',
+        x: 500 * widthScale,
+        y: 250 * heightScale,
+        radius: radius,
+        color: 'radial-gradient(circle, rgba(178, 235, 242, 0.4) 0%, rgba(128, 222, 234, 0.2) 70%, transparent 100%)',
         icon: '❄️',
-        dwellThreshold: 4000 
+        dwellThreshold: 4000
       },
-      { 
-        id: 'checkout', 
-        name: 'Checkout', 
-        x: 500 * widthScale, 
-        y: 300 * heightScale, 
-        width: 200 * widthScale, 
-        height: 150 * heightScale, 
-        color: 'linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%)', 
+      {
+        id: 'beverages',
+        name: 'Beverages',
+        x: 700 * widthScale,
+        y: 250 * heightScale,
+        radius: radius * 0.9,
+        color: 'radial-gradient(circle, rgba(197, 202, 233, 0.4) 0%, rgba(159, 168, 218, 0.2) 70%, transparent 100%)',
+        icon: '🥤',
+        dwellThreshold: 3500
+      },
+      {
+        id: 'pharmacy',
+        name: 'Pharmacy',
+        x: 100 * widthScale,
+        y: 450 * heightScale,
+        radius: radius * 0.7,
+        color: 'radial-gradient(circle, rgba(255, 183, 197, 0.4) 0%, rgba(248, 187, 208, 0.2) 70%, transparent 100%)',
+        icon: '💊',
+        dwellThreshold: 6000
+      },
+      {
+        id: 'health-beauty',
+        name: 'Health & Beauty',
+        x: 300 * widthScale,
+        y: 450 * heightScale,
+        radius: radius * 0.8,
+        color: 'radial-gradient(circle, rgba(225, 190, 231, 0.4) 0%, rgba(206, 147, 216, 0.2) 70%, transparent 100%)',
+        icon: '💄',
+        dwellThreshold: 5000
+      },
+      {
+        id: 'checkout',
+        name: 'Checkout',
+        x: 500 * widthScale,
+        y: 450 * heightScale,
+        radius: radius * 1.2,
+        color: 'radial-gradient(circle, rgba(225, 190, 231, 0.5) 0%, rgba(206, 147, 216, 0.3) 70%, transparent 100%)',
         icon: '💳',
-        dwellThreshold: 7000 
+        dwellThreshold: 7000
+      },
+      {
+        id: 'customer-service',
+        name: 'Customer Service',
+        x: 700 * widthScale,
+        y: 450 * heightScale,
+        radius: radius * 0.6,
+        color: 'radial-gradient(circle, rgba(187, 222, 251, 0.4) 0%, rgba(144, 202, 249, 0.2) 70%, transparent 100%)',
+        icon: '🛎️',
+        dwellThreshold: 4000
+      },
+      {
+        id: 'exit',
+        name: 'Exit',
+        x: 100 * widthScale,
+        y: 550 * heightScale,
+        radius: radius * 0.7,
+        color: 'radial-gradient(circle, rgba(244, 67, 54, 0.3) 0%, rgba(244, 67, 54, 0.1) 70%, transparent 100%)',
+        icon: '🚪',
+        dwellThreshold: 2000
+      },
+      {
+        id: 'self-checkout',
+        name: 'Self Checkout',
+        x: 300 * widthScale,
+        y: 550 * heightScale,
+        radius: radius * 0.9,
+        color: 'radial-gradient(circle, rgba(156, 39, 176, 0.4) 0%, rgba(156, 39, 176, 0.2) 70%, transparent 100%)',
+        icon: '🤖',
+        dwellThreshold: 5000
+      },
+      {
+        id: 'shopping-carts',
+        name: 'Shopping Carts',
+        x: 500 * widthScale,
+        y: 550 * heightScale,
+        radius: radius * 0.6,
+        color: 'radial-gradient(circle, rgba(158, 158, 158, 0.3) 0%, rgba(158, 158, 158, 0.1) 70%, transparent 100%)',
+        icon: '🛒',
+        dwellThreshold: 2000
+      },
+      {
+        id: 'restrooms',
+        name: 'Restrooms',
+        x: 700 * widthScale,
+        y: 550 * heightScale,
+        radius: radius * 0.5,
+        color: 'radial-gradient(circle, rgba(121, 85, 72, 0.3) 0%, rgba(121, 85, 72, 0.1) 70%, transparent 100%)',
+        icon: '🚻',
+        dwellThreshold: 3000
       }
     ];
   };
@@ -196,9 +293,9 @@ const FloorPlan: React.FC = () => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
-      oscillator.type = 'square';
-      oscillator.frequency.value = 150;
-      gainNode.gain.value = 0.1;
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 1200;
+      gainNode.gain.value = 0.05;
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
@@ -207,7 +304,7 @@ const FloorPlan: React.FC = () => {
       
       setTimeout(() => {
         oscillator.stop();
-      }, 200);
+      }, 150);
     } catch (error) {
       console.error('Failed to play buzz sound:', error);
     }
@@ -258,16 +355,15 @@ const FloorPlan: React.FC = () => {
       }
     }
     
-    // Check which zone the cursor is in
+    // Check which zone the cursor is in (circular zones)
     let foundZone: string | null = null;
     
     for (const zone of zones) {
-      if (
-        x >= zone.x && 
-        x <= zone.x + zone.width && 
-        y >= zone.y && 
-        y <= zone.y + zone.height
-      ) {
+      const distance = Math.sqrt(
+        Math.pow(x - zone.x, 2) + Math.pow(y - zone.y, 2)
+      );
+      
+      if (distance <= zone.radius) {
         foundZone = zone.id;
         break;
       }
@@ -403,49 +499,44 @@ const FloorPlan: React.FC = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Render zones */}
+        {/* Render circular zones */}
         {zones.map(zone => (
           <div
             key={zone.id}
-            className="zone"
+            className="zone-circle-area"
             style={{
               left: zone.x,
               top: zone.y,
-              width: zone.width,
-              height: zone.height,
+              width: zone.radius * 2,
+              height: zone.radius * 2,
               background: zone.color,
-              opacity: currentZone === zone.id ? 1 : 0.8,
-              boxShadow: currentZone === zone.id ? '0 8px 20px rgba(0, 0, 0, 0.15)' : '0 4px 12px rgba(0, 0, 0, 0.08)'
+              transform: 'translate(-50%, -50%)',
+              opacity: currentZone === zone.id ? 0.9 : 0.6,
+              border: currentZone === zone.id ? '3px solid rgba(255, 255, 255, 0.8)' : '2px solid rgba(255, 255, 255, 0.4)',
+              boxShadow: currentZone === zone.id ?
+                '0 0 30px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.3)' :
+                '0 0 15px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.2)'
             }}
           >
-            <div className="zone-icon">{zone.icon}</div>
-            {zone.name}
-            
-            {/* Zone circle */}
-            <div
-              className="zone-circle"
-              style={{
-                left: zone.width / 2,
-                top: zone.height / 2,
-                width: zone.width * 1.5,
-                height: zone.height * 1.5,
-                transform: 'translate(-50%, -50%)',
-                opacity: currentZone === zone.id ? 0.3 : 0.15
-              }}
-            />
+            <div className="zone-content">
+              <div className="zone-icon">{zone.icon}</div>
+              <div className="zone-name">{zone.name}</div>
+            </div>
           </div>
         ))}
         
-        {/* Render axis points */}
+        {/* Render access points (WiFi beacons) */}
         {axisPoints.map((point, index) => (
           <div
             key={index}
-            className="axis-point"
+            className="access-point"
             style={{
               left: point.x,
               top: point.y
             }}
-          />
+          >
+            <div className="access-point-signal" />
+          </div>
         ))}
         
         {/* Render cursor person */}
